@@ -1,12 +1,13 @@
-name: Polymarket Trade
+name: Test
 on: push
 jobs:
-  trade:
+  t:
     runs-on: ubuntu-latest
     steps:
+      - run: echo hello
       - run: pip install -q hermes-pmxt
       - env:
-          POLYMARKET_PRIVATE_KEY: ${{ secrets.POLY_PRIVATE_KEY }}
+          K: ${{ secrets.POLY_PRIVATE_KEY }}
         run: |
           python -c "
           import sys, time, json

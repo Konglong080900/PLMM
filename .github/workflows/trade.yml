@@ -11,23 +11,23 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
+      - name: Install polytown
+        run: npm install -g polytown
           
-      - name: Install deps
-        run: |
-          pip install py-clob-client pysocks requests
-          sudo apt-get update -qq && sudo apt-get install -y -qq tor 2>&1 | tail -3
-          
-      - name: Start Tor
-        run: |
-          sudo tor --SocksPort 19050 &
-          echo "Tor starting..."
-          
-      - name: Execute trade
+      - name: Check status
         env:
-          PRIVATE_KEY: ${{ secrets.POLY_PRIVATE_KEY }}
-          API_KEY: ${{ secrets.POLY_API_KEY }}
-        run: python trade.py
+          POLYMARKET_PRIVATE_KEY: ${{ secrets.POLY_PRIVATE_KEY }}
+        run: |
+          echo "=== 检查连接 ==="
+          polytown status
+          
+      - name: Place order
+        env:
+          POLYMARKET_PRIVATE_KEY: ${{ secrets.POLY_PRIVATE_KEY }}
+        run: |
+          echo "=== 下单买BTC YES ==="
+          polytown clob create-order \
+            --token 101163338685857975456381241657395646973932529603300193676223177504175672414916 \
+            --side BUY \
+            --price 0.04 \
+            --size 125

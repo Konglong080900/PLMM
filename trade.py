@@ -17,28 +17,25 @@ else:
     sys.stderr.write("SIDECAR_FAIL\n")
     exit(1)
 
-# 搜索BTC July 8市场
+# 搜索市场获取ID
 sys.stderr.write("Searching...\n")
-m = pmxt_search("bitcoin up or down on july 8", exchange="polymarket", limit=10)
+m = pmxt_search("bitcoin up or down on july 8 2026", exchange="polymarket", limit=5)
 for o in m.get("data", []):
     t = o.get("title", "").lower()
-    sys.stderr.write(f"  {o.get('id','?')[:20]}... {o.get('title','')[:60]}\n")
     if "july 8" in t or "jul 8" in t:
         mid = o["id"]
         oid = o["outcomes"][0]["id"]
-        sys.stderr.write(f"MATCH: market={mid} outcome={oid}\n")
+        sys.stderr.write(f"MATCH:{mid}|{oid}\n")
         break
 else:
     sys.stderr.write("NOT_FOUND\n")
     exit(1)
 
-# 下单
+# 下单 
 sys.stderr.write("Ordering...\n")
-built = pmxt_build_order(
-    market_id=mid, outcome_id=oid, side="buy",
-    order_type="limit", amount=1.0, price=0.04,
-    exchange="polymarket",
-)
+built = pmxt_build_order(market_id=mid, outcome_id=oid, side="buy",
+                          order_type="limit", amount=1.0, price=0.04,
+                          exchange="polymarket")
 sys.stderr.write(f"BUILT:{json.dumps(built, default=str)[:400]}\n")
 
 if built.get("success"):

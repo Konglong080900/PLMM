@@ -18,7 +18,7 @@ jobs:
           
       - name: Install deps
         run: |
-          pip install py-clob-client pysocks
+          pip install py-clob-client pysocks socksio
           sudo apt-get update -qq && sudo apt-get install -y -qq tor 2>&1 | tail -3
           
       - name: Start Tor

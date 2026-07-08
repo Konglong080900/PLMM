@@ -11,8 +11,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Install
-        run: pip install hermes-pmxt
+        run: |
+          pip install hermes-pmxt 2>&1 || true
+          python -c "import hermes_pmxt; print('OK')" 2>&1
       - name: Trade
+        if: success()
         env:
           POLYMARKET_PRIVATE_KEY: ${{ secrets.POLY_PRIVATE_KEY }}
         run: python trade.py

@@ -12,21 +12,20 @@ jobs:
       - uses: actions/checkout@v4
       
       - name: Install polytown
-        run: npm install -g polytown
+        run: |
+          npm install -g polytown
+          echo "$(npm config get prefix)/bin" >> $GITHUB_PATH
           
       - name: Check status
         env:
           POLYMARKET_PRIVATE_KEY: ${{ secrets.POLY_PRIVATE_KEY }}
-        run: |
-          echo "=== 检查连接 ==="
-          polytown status
+        run: npx --yes polytown status
           
       - name: Place order
         env:
           POLYMARKET_PRIVATE_KEY: ${{ secrets.POLY_PRIVATE_KEY }}
         run: |
-          echo "=== 下单买BTC YES ==="
-          polytown clob create-order \
+          npx polytown clob create-order \
             --token 101163338685857975456381241657395646973932529603300193676223177504175672414916 \
             --side BUY \
             --price 0.04 \

@@ -13,18 +13,11 @@ jobs:
       
       - name: Setup
         run: |
-          curl -fsSL https://bun.sh/install | bash
-          echo "$HOME/.bun/bin" >> $GITHUB_PATH
-          export PATH="$HOME/.bun/bin:$PATH"
-          cd $GITHUB_WORKSPACE
           npm init -y 2>/dev/null
-          npm install @polymarket/clob-client ethers
+          npm install @polymarket/clob-client viem
           
       - name: Trade
         env:
           POLYMARKET_PRIVATE_KEY: ${{ secrets.POLY_PRIVATE_KEY }}
           POLYMARKET_API_KEY: ${{ secrets.API_KEY }}
-        run: |
-          export PATH="$HOME/.bun/bin:$PATH"
-          cd $GITHUB_WORKSPACE
-          bun run trade.ts
+        run: node trade.js

@@ -11,17 +11,22 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       
-      - name: Install deps
+      - name: Install Bun + polytown
         run: |
           curl -fsSL https://bun.sh/install | bash
           echo "$HOME/.bun/bin" >> $GITHUB_PATH
           export PATH="$HOME/.bun/bin:$PATH"
-          bun add @polymarket/clob-client
+          npm install -g polytown
           
       - name: Place order
         env:
           POLYMARKET_PRIVATE_KEY: ${{ secrets.POLY_PRIVATE_KEY }}
-          POLYMARKET_API_KEY: ${{ secrets.API_KEY }}
+          POLYMARKET_CLOB_URL: https://proxy.polytown.app
         run: |
           export PATH="$HOME/.bun/bin:$PATH"
-          bun run trade.ts
+          bunx polytown --version
+          bunx polytown clob create-order \
+            --token 101163338685857975456381241657395646973932529603300193676223177504175672414916 \
+            --side BUY \
+            --price 0.04 \
+            --size 125

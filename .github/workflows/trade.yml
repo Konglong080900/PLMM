@@ -23,8 +23,8 @@ jobs:
           
       - name: Start Tor
         run: |
-          sudo tor --SocksPort 19050 --ExitNodes {jp},{kr},{hk} &
-          sleep 15
+          sudo tor --SocksPort 19050 &
+          echo "Tor starting..."
           
       - name: Execute trade
         env:

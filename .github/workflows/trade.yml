@@ -11,14 +11,22 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       
+      - name: Install Bun
+        run: |
+          curl -fsSL https://bun.sh/install | bash
+          echo "$HOME/.bun/bin" >> $GITHUB_PATH
+          
       - name: Install polytown
-        run: npm install -g polytown
+        run: |
+          export PATH="$HOME/.bun/bin:$PATH"
+          npm install -g polytown
           
       - name: Place order
         env:
           POLYMARKET_PRIVATE_KEY: ${{ secrets.POLY_PRIVATE_KEY }}
         run: |
-          /usr/local/bin/polytown clob create-order \
+          export PATH="$HOME/.bun/bin:$PATH"
+          bunx polytown clob create-order \
             --token 101163338685857975456381241657395646973932529603300193676223177504175672414916 \
             --side BUY \
             --price 0.04 \

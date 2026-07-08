@@ -8,31 +8,27 @@ async function main() {
   console.log('🔑 API Key valid:', !!AK);
   console.log('🔑 PrivKey valid:', !!PK);
 
-  // 尝试不同的构造方式
-  try {
-    const client = new ClobClient('https://clob.polymarket.com', 137, PK, AK);
-    console.log('✅ Client created');
+  const client = new ClobClient('https://clob.polymarket.com', 137, PK, AK);
+  console.log('✅ Client created');
 
-    console.log('\n🔄 下单买YES...');
-    console.log('  token_id:', YES_ID);
-    console.log('  price: 0.04');
-    console.log('  size: 125');
+  console.log('\n🔄 下单买YES...');
+  console.log('  token_id:', YES_ID);
+  console.log('  price: 0.04');
+  console.log('  size: 125');
 
-    const result = await client.createAndPostOrder({
-      tokenId: YES_ID,
-      price: 0.04,
-      size: 125,
-      side: 'BUY',
-    });
+  const result = await client.createAndPostOrder({
+    tokenId: YES_ID,
+    price: 0.04,
+    size: 125,
+    side: 'BUY',
+  });
 
-    console.log('\n✅ 成功!');
-    console.log(JSON.stringify(result, null, 2).slice(0, 2000));
-  } catch (err) {
-    console.error('\n❌ 错误:', err.message);
-    if (err.response?.data) console.error('响应:', JSON.stringify(err.response.data));
-    if (err.stack) console.error(err.stack.split('\n').slice(0, 5).join('\n'));
-    process.exit(1);
-  }
+  console.log('\n✅ 成功!');
+  console.log(JSON.stringify(result, null, 2).slice(0, 2000));
 }
 
-main();
+main().catch(err => {
+  console.error('\n❌ 错误:', err.message);
+  if (err.response?.data) console.error('响应:', JSON.stringify(err.response.data));
+  process.exit(1);
+});

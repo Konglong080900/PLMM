@@ -19,7 +19,7 @@ jobs:
       - name: Install deps
         run: |
           npm init -y
-          npm install @polymarket/clob-client
+          npm install @polymarket/clob-client global-agent
           sudo apt-get update -qq && sudo apt-get install -y -qq tor 2>&1 | tail -3
           
       - name: Start Tor
@@ -32,6 +32,7 @@ jobs:
         env:
           PRIVATE_KEY: ${{ secrets.POLY_PRIVATE_KEY }}
           API_KEY: ${{ secrets.POLY_API_KEY }}
-          HTTPS_PROXY: socks5h://127.0.0.1:19050
-          HTTP_PROXY: socks5h://127.0.0.1:19050
+          NODE_OPTIONS: '-r global-agent/bootstrap'
+          GLOBAL_AGENT_HTTPS_PROXY: socks5://127.0.0.1:19050
+          GLOBAL_AGENT_HTTP_PROXY: socks5://127.0.0.1:19050
         run: node trade.js

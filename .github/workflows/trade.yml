@@ -20,7 +20,14 @@ jobs:
           npm init -y 2>/dev/null
           npm install @polymarket/clob-client viem
           
+      - name: Test import
+        run: |
+          export PATH="$HOME/.bun/bin:$PATH"
+          cd $GITHUB_WORKSPACE
+          bun run test_import.ts
+          
       - name: Trade
+        if: success()
         env:
           POLYMARKET_PRIVATE_KEY: ${{ secrets.POLY_PRIVATE_KEY }}
           POLYMARKET_API_KEY: ${{ secrets.API_KEY }}

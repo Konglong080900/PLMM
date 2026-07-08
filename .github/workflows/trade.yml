@@ -11,10 +11,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Setup
-        run: |
-          npm init -y 2>/dev/null
-          npm install @polymarket/clob-client-v2 viem
+        run: pip install py-clob-client-v2
       - name: Trade
         env:
           POLYMARKET_PRIVATE_KEY: ${{ secrets.POLY_PRIVATE_KEY }}
-        run: node trade.mjs
+        run: python trade.py

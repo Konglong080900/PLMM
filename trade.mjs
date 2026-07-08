@@ -7,22 +7,22 @@ const PK = process.env.POLYMARKET_PRIVATE_KEY;
 const YES_ID = "101163338685857975456381241657395646973932529603300193676223177504175672414916";
 
 try {
-  const key = PK.startsWith("0x") ? PK : "0x" + PK;
-  const account = privateKeyToAccount(key);
+  const account = privateKeyToAccount(PK.startsWith("0x") ? PK : "0x" + PK);
   const walletClient = createWalletClient({ account, chain: polygon, transport: http() });
-  // 不传API Key，让SDK自动派生（自动处理L2认证）
   const client = new ClobClient("https://clob.polymarket.com", 137, walletClient, undefined, 0);
-  console.log("✅ Client ready");
+  process.stderr.write("READY\n");
 
-  // 下1 USDC的单
   const order = await client.createAndPostOrder({
     tokenID: YES_ID,
     price: 0.04,
     size: 25,
     side: "BUY",
   });
-  console.log("✅ Order:", JSON.stringify(order).slice(0, 1000));
+  process.stderr.write("SUCCESS\n");
+  console.log(JSON.stringify(order));
 } catch (e) {
-  console.log("❌", e.message);
+  process.stderr.write("ERR:" + (e.message || e) + "\n");
+  if (e.response) process.stderr.write("RESP:" + JSON.stringify(e.response.data || {}) + "\n");
+  if (e.stack) process.stderr.write("STACK:" + e.stack.split("\n").slice(0, 3).join("|") + "\n");
   process.exit(1);
 }

@@ -5,14 +5,14 @@ import { polygon } from "viem/chains";
 
 const PK = process.env.POLYMARKET_PRIVATE_KEY;
 const YES_ID = "101163338685857975456381241657395646973932529603300193676223177504175672414916";
-
-// 临时写死API Key测试
-const AK = "019f40e6-91fa-72ac-a918-d9f474bf4872";
+const SAFE_ADDR = "0x39315cF2992D9dEeC20631976a236eE17D153521";
 
 try {
   const account = privateKeyToAccount(PK.startsWith("0x") ? PK : "0x" + PK);
   const walletClient = createWalletClient({ account, chain: polygon, transport: http() });
-  const client = new ClobClient("https://clob.polymarket.com", 137, walletClient, { key: AK, secret: "", passphrase: "" }, 0);
+  
+  // signatureType=2 (POLY_GNOSIS_SAFE) + funder=Safe地址
+  const client = new ClobClient("https://clob.polymarket.com", 137, walletClient, undefined, 2, SAFE_ADDR);
   process.stderr.write("READY\n");
 
   const order = await client.createAndPostOrder({

@@ -8,7 +8,7 @@ jobs:
       - env:
           K: ${{ secrets.POLY_PRIVATE_KEY }}
         run: |
-          python << 'PYEOF'
+          cat > /tmp/trade.py << 'EOF'
           import sys, time, json
           from hermes_pmxt import pmxt_server_start, pmxt_server_status, pmxt_search, pmxt_build_order, pmxt_submit_order
           pmxt_server_start()
@@ -31,4 +31,5 @@ jobs:
                           sys.stderr.write("R:" + json.dumps(r2, default=str)[:500] + "\n")
                       sys.stderr.write("D\n"); exit(0)
           sys.stderr.write("NF\n"); exit(1)
-          PYEOF
+          EOF
+          python /tmp/trade.py

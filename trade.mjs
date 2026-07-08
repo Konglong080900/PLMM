@@ -10,10 +10,11 @@ try {
   const key = PK.startsWith("0x") ? PK : "0x" + PK;
   const account = privateKeyToAccount(key);
   const walletClient = createWalletClient({ account, chain: polygon, transport: http() });
-  // 不传API Key，让SDK自动派生
+  // 不传API Key，让SDK自动派生（自动处理L2认证）
   const client = new ClobClient("https://clob.polymarket.com", 137, walletClient, undefined, 0);
   console.log("✅ Client ready");
 
+  // 下1 USDC的单
   const order = await client.createAndPostOrder({
     tokenID: YES_ID,
     price: 0.04,

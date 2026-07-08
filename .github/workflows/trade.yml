@@ -11,14 +11,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       
-      - name: Setup Python
-        uses: actions/setup-python@v5
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          python-version: '3.11'
+          node-version: '20'
           
       - name: Install deps
         run: |
-          pip install --upgrade py-clob-client pysocks socksio
+          npm init -y
+          npm install @polymarket/clob-client
           sudo apt-get update -qq && sudo apt-get install -y -qq tor 2>&1 | tail -3
           
       - name: Start Tor
@@ -33,4 +34,4 @@ jobs:
           API_KEY: ${{ secrets.POLY_API_KEY }}
           HTTPS_PROXY: socks5h://127.0.0.1:19050
           HTTP_PROXY: socks5h://127.0.0.1:19050
-        run: python trade.py
+        run: node trade.js

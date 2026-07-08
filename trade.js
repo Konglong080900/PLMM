@@ -1,41 +1,36 @@
 const { ClobClient } = require('@polymarket/clob-client');
 
 async function main() {
-  const PRIVATE_KEY = process.env.PRIVATE_KEY;
-  const API_KEY = process.env.API_KEY;
-  const YES_TOKEN_ID = '101163338685857975456381241657395646973932529603300193676223177504175672414916';
+  const PK = process.env.PRIVATE_KEY;
+  const AK = process.env.API_KEY;
+  const YES_ID = '101163338685857975456381241657395646973932529603300193676223177504175672414916';
 
-  console.log('🔑 API Key valid:', !!API_KEY);
-  console.log('🔑 PrivKey valid:', !!PRIVATE_KEY);
+  console.log('🔑 API Key valid:', !!AK);
+  console.log('🔑 PrivKey valid:', !!PK);
 
-  const client = new ClobClient({
-    host: 'https://clob.polymarket.com',
-    chainId: 137,
-    privateKey: PRIVATE_KEY,
-    apiKey: API_KEY,
-  });
-
-  console.log('\n🔄 创建并提交订单...');
-  console.log('  token_id:', YES_TOKEN_ID);
-  console.log('  price: 0.04');
-  console.log('  size: 125');
-  console.log('  side: BUY');
-
+  // 尝试不同的构造方式
   try {
+    const client = new ClobClient('https://clob.polymarket.com', 137, PK, AK);
+    console.log('✅ Client created');
+
+    console.log('\n🔄 下单买YES...');
+    console.log('  token_id:', YES_ID);
+    console.log('  price: 0.04');
+    console.log('  size: 125');
+
     const result = await client.createAndPostOrder({
-      tokenId: YES_TOKEN_ID,
+      tokenId: YES_ID,
       price: 0.04,
       size: 125,
       side: 'BUY',
     });
+
     console.log('\n✅ 成功!');
-    console.log(JSON.stringify(result, null, 2).slice(0, 1000));
+    console.log(JSON.stringify(result, null, 2).slice(0, 2000));
   } catch (err) {
     console.error('\n❌ 错误:', err.message);
-    if (err.response) {
-      console.error('  状态:', err.response.status);
-      console.error('  响应:', JSON.stringify(err.response.data || {}));
-    }
+    if (err.response?.data) console.error('响应:', JSON.stringify(err.response.data));
+    if (err.stack) console.error(err.stack.split('\n').slice(0, 5).join('\n'));
     process.exit(1);
   }
 }

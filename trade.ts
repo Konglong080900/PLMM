@@ -10,15 +10,17 @@ const YES_ID = "1011633386858579754563812416573956469739325296033001936762231775
 const account = privateKeyToAccount(PK as `0x${string}`);
 const walletClient = createWalletClient({ account, chain: polygon, transport: http() });
 
+// 传API Key
 const creds = AK ? { key: AK, secret: "", passphrase: "" } : undefined;
 const client = new ClobClient("https://clob.polymarket.com", 137, walletClient, creds, 0);
 
-console.log("✅ Client ready");
+console.log("✅ Client ready, placing order...");
 
+// 用正确的参数名: tokenID (大写D), side 大写
 const order = await client.createAndPostOrder({
-  tokenId: YES_ID,
+  tokenID: YES_ID,
   price: 0.04,
-  size: 125,
+  size: 25,   // 1 USDC = 25个YES @ 0.04
   side: "BUY",
 });
 

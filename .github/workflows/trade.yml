@@ -1,16 +1,11 @@
 name: Polymarket Auto Trade
-
-on:
-  workflow_dispatch:
-  push:
-    branches: [ main ]
-
+on: [workflow_dispatch, push]
 jobs:
   trade:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - run: pip install -q hermes-pmxt
-      - env:
+      - run: python trade.py
+        env:
           POLYMARKET_PRIVATE_KEY: ${{ secrets.POLY_PRIVATE_KEY }}
-        run: python trade.py

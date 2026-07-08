@@ -20,4 +20,4 @@ jobs:
         env:
           POLYMARKET_PRIVATE_KEY: ${{ secrets.POLY_PRIVATE_KEY }}
           POLYMARKET_API_KEY: ${{ secrets.API_KEY }}
-        run: node trade.js
+        run: node trade.mjs

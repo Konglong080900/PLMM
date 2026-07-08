@@ -11,15 +11,19 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       
-      - name: Install Bun
+      - name: Install Bun + polytown
         run: |
           curl -fsSL https://bun.sh/install | bash
           echo "$HOME/.bun/bin" >> $GITHUB_PATH
-          
-      - name: Install polytown
-        run: |
           export PATH="$HOME/.bun/bin:$PATH"
           npm install -g polytown
+          
+      - name: Setup wallet
+        env:
+          POLYMARKET_PRIVATE_KEY: ${{ secrets.POLY_PRIVATE_KEY }}
+        run: |
+          export PATH="$HOME/.bun/bin:$PATH"
+          bunx polytown setup -y 2>&1
           
       - name: Place order
         env:

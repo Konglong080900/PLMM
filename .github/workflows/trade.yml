@@ -10,9 +10,27 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Trade
+      
+      - name: Install deps
+        run: |
+          pip install -q py-clob-client-v2 pysocks
+          
+      - name: Run via Tor
         env:
           POLYMARKET_PRIVATE_KEY: ${{ secrets.POLY_PRIVATE_KEY }}
         run: |
-          pip install -q py-clob-client-v2 2>&1
-          python trade.py
+          # 用Docker启动Tor（比apt安装快）
+          docker run -d --rm --name torproxy -p 19050:9050 \
+            peterdavehello/tor-socks-proxy:latest 2>/dev/null || \
+            docker run -d --rm --name torproxy -p 19050:9050 \
+            dperson/torproxy:latest 2>/dev/null || \
+            (apt-get update -qq && apt-get install -y -qq tor 2>&1 | tail -1 && tor --SocksPort 19050 &)
+          
+          # 等Tor就绪
+          for i in $(seq 1 30); do
+            python -c "import socks;s=socks.socksocket();s.set_proxy(socks.SOCKS5,'127.0.0.1',19050);s.settimeout(5);s.connect(('clob.polymarket.com',443));s.close();print('tor ok');exit(0)" 2>/dev/null && break
+            sleep 2
+          done
+          
+          # 通过Tor下单
+          HTTPS_PROXY=socks5://127.0.0.1:19050 python trade.py

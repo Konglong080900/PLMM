@@ -19,5 +19,4 @@ jobs:
       - name: Trade
         env:
           POLYMARKET_PRIVATE_KEY: ${{ secrets.POLY_PRIVATE_KEY }}
-          API_KEY: ${{ secrets.API_KEY }}
         run: node trade.mjs

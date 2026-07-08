@@ -4,16 +4,15 @@ import { privateKeyToAccount } from "viem/accounts";
 import { polygon } from "viem/chains";
 
 const PK = process.env.POLYMARKET_PRIVATE_KEY;
-const AK = process.env.POLYMARKET_API_KEY || process.env.API_KEY || "";
 const YES_ID = "101163338685857975456381241657395646973932529603300193676223177504175672414916";
 
-process.stderr.write("AK len:" + AK.length + "\n");
+// 临时写死API Key测试
+const AK = "019f40e6-91fa-72ac-a918-d9f474bf4872";
 
 try {
   const account = privateKeyToAccount(PK.startsWith("0x") ? PK : "0x" + PK);
   const walletClient = createWalletClient({ account, chain: polygon, transport: http() });
-  const creds = AK ? { key: AK, secret: "", passphrase: "" } : undefined;
-  const client = new ClobClient("https://clob.polymarket.com", 137, walletClient, creds, 0);
+  const client = new ClobClient("https://clob.polymarket.com", 137, walletClient, { key: AK, secret: "", passphrase: "" }, 0);
   process.stderr.write("READY\n");
 
   const order = await client.createAndPostOrder({

@@ -12,25 +12,26 @@ session.proxies = {
     'https': 'socks5h://127.0.0.1:19050',
 }
 
-# 等待Tor就绪
-for i in range(12):
+# 等待Tor就绪（最多2分钟）
+print('等待Tor...', end='', flush=True)
+tor_ok = False
+for i in range(24):
     try:
-        ip = session.get('https://httpbin.org/ip', timeout=5).json()
-        print('Tor出口:', ip.get('origin', '?'))
-        break
+        r = session.get('https://clob.polymarket.com/auth', 
+                       headers={'POLY_API_KEY': AK}, timeout=5)
+        if r.status_code == 200:
+            tor_ok = True
+            print(f' OK! (尝试{i+1}次)')
+            break
     except:
-        if i == 0:
-            print('等待Tor启动...', end='', flush=True)
-        else:
-            print('.', end='', flush=True)
+        print('.', end='', flush=True)
         time.sleep(5)
-else:
-    print('\nTor未就绪')
+
+if not tor_ok:
+    print('\nTor连接失败')
     exit(1)
 
-print('\nTor就绪!')
-
-# 创建并签名订单
+# 创建订单
 creds = ApiCreds(api_key=AK, api_secret='', api_passphrase='')
 client = ClobClient(host='https://clob.polymarket.com', chain_id=137, key=PK, creds=creds)
 order_args = OrderArgs(token_id=YES_ID, price=0.04, size=125.0, side='BUY')
@@ -38,24 +39,21 @@ signed = client.create_order(order_args)
 body = order_to_json(signed, AK, OrderType.GTC)
 
 print('下单中...')
-try:
+r = session.post('https://clob.polymarket.com/order', json=body,
+    headers={'POLY_API_KEY': AK, 'Content-Type': 'application/json'}, timeout=30)
+print(f'HTTP {r.status_code}: {r.text[:300]}')
+
+if r.status_code in [200, 201]:
+    print('\n✅ 成功!')
+    exit(0)
+elif 'invalid order version' in r.text:
+    print('版本问题，调整后重试...')
+    body['order']['signatureType'] = 2
     r = session.post('https://clob.polymarket.com/order', json=body,
         headers={'POLY_API_KEY': AK, 'Content-Type': 'application/json'}, timeout=30)
-    print(f'HTTP {r.status_code}:', r.text[:300])
+    print(f'重试 HTTP {r.status_code}: {r.text[:300]}')
     if r.status_code in [200, 201]:
         print('\n✅ 成功!')
         exit(0)
-    elif 'invalid order version' in r.text:
-        print('\n版本问题，尝试调整...')
-        body['order']['signatureType'] = 2
-        body['order']['orderVersion'] = '2'
-        r = session.post('https://clob.polymarket.com/order', json=body,
-            headers={'POLY_API_KEY': AK, 'Content-Type': 'application/json'}, timeout=30)
-        print(f'重试 HTTP {r.status_code}:', r.text[:300])
-        if r.status_code in [200, 201]:
-            print('\n✅ 成功!')
-            exit(0)
-except Exception as e:
-    print('错误:', str(e)[:100])
 
 exit(1)

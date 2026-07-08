@@ -11,14 +11,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       
-      - name: Setup Bun + deps
+      - name: Setup
         run: |
           curl -fsSL https://bun.sh/install | bash
           echo "$HOME/.bun/bin" >> $GITHUB_PATH
           export PATH="$HOME/.bun/bin:$PATH"
           cd $GITHUB_WORKSPACE
           npm init -y 2>/dev/null
-          npm install @polymarket/clob-client
+          npm install @polymarket/clob-client viem
           
       - name: Trade
         env:

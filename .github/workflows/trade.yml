@@ -11,20 +11,17 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       
-      - name: Install Bun
+      - name: Install deps
         run: |
           curl -fsSL https://bun.sh/install | bash
           echo "$HOME/.bun/bin" >> $GITHUB_PATH
-          
-      - name: Install deps
-        run: |
           export PATH="$HOME/.bun/bin:$PATH"
-          bun init -y
           bun add @polymarket/clob-client
           
       - name: Place order
         env:
           POLYMARKET_PRIVATE_KEY: ${{ secrets.POLY_PRIVATE_KEY }}
+          POLYMARKET_API_KEY: ${{ secrets.API_KEY }}
         run: |
           export PATH="$HOME/.bun/bin:$PATH"
           bun run trade.ts

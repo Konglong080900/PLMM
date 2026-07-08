@@ -10,9 +10,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Setup
-        run: pip install py-clob-client-v2
       - name: Trade
         env:
           POLYMARKET_PRIVATE_KEY: ${{ secrets.POLY_PRIVATE_KEY }}
-        run: python trade.py
+        run: |
+          pip install -q py-clob-client-v2 2>&1
+          python trade.py

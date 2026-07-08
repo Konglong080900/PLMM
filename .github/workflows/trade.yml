@@ -17,10 +17,20 @@ jobs:
           python-version: '3.11'
           
       - name: Install deps
-        run: pip install py-clob-client
+        run: |
+          pip install py-clob-client pysocks
+          sudo apt-get update -qq && sudo apt-get install -y -qq tor 2>&1 | tail -3
+          
+      - name: Start Tor
+        run: |
+          sudo tor --SocksPort 19050 --ExitNodes {jp},{kr},{hk} &
+          sleep 15
+          echo "✅ Tor started"
           
       - name: Execute trade
         env:
           PRIVATE_KEY: ${{ secrets.POLY_PRIVATE_KEY }}
           API_KEY: ${{ secrets.POLY_API_KEY }}
+          HTTPS_PROXY: socks5h://127.0.0.1:19050
+          HTTP_PROXY: socks5h://127.0.0.1:19050
         run: python trade.py

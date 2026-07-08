@@ -4,7 +4,7 @@ jobs:
   trade:
     runs-on: ubuntu-latest
     steps:
-      - run: pip install -q hermes-pmxt
-      - run: python trade.py
+      - uses: actions/checkout@v4
+      - run: pip install -q hermes-pmxt && python trade.py
         env:
           POLYMARKET_PRIVATE_KEY: ${{ secrets.POLY_PRIVATE_KEY }}

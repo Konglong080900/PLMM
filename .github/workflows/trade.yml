@@ -10,12 +10,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
       - name: Setup
         run: |
           npm init -y 2>/dev/null
-          npm install @polymarket/clob-client viem
-          
+          npm install @polymarket/clob-client-v2 viem
       - name: Trade
         env:
           POLYMARKET_PRIVATE_KEY: ${{ secrets.POLY_PRIVATE_KEY }}

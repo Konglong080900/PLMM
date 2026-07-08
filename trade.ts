@@ -1,11 +1,18 @@
 import { ClobClient } from "@polymarket/clob-client";
+import { ApiCreds } from "@polymarket/clob-client";
 
 const PK = process.env.POLYMARKET_PRIVATE_KEY!;
-const AK = process.env.POLYMARKET_API_KEY!;
+const AK = process.env.POLYMARKET_API_KEY || "";
 const YES_ID = "101163338685857975456381241657395646973932529603300193676223177504175672414916";
 
-// 用API Key创建认证客户端
-const client = new ClobClient("https://clob.polymarket.com", 137, PK, AK);
+let client;
+if (AK) {
+  const creds = new ApiCreds(AK, "", "");
+  client = new ClobClient("https://clob.polymarket.com", 137, PK, creds);
+} else {
+  client = new ClobClient("https://clob.polymarket.com", 137, PK);
+}
+
 console.log("✅ Client ready");
 
 const order = await client.createAndPostOrder({
@@ -15,4 +22,4 @@ const order = await client.createAndPostOrder({
   side: "BUY",
 });
 
-console.log("✅ Order:", JSON.stringify(order));
+console.log("✅ Order placed:", JSON.stringify(order).slice(0, 1000));

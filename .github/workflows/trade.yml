@@ -1,11 +1,11 @@
-name: Polymarket Auto Trade
-on: [workflow_dispatch, push]
+name: Test
+on: push
 jobs:
-  trade:
+  t:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - run: pip install -q hermes-pmxt
-      - run: python trade.py
-        env:
-          POLYMARKET_PRIVATE_KEY: ${{ secrets.POLY_PRIVATE_KEY }}
+      - run: echo hello
+      - run: pip install hermes-pmxt 2>&1 | tail -3
+      - env:
+          K: ${{ secrets.POLY_PRIVATE_KEY }}
+        run: python -c "import os; print('key' if os.environ.get('K') else 'no')"

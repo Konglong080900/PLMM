@@ -10,9 +10,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Install
-        run: pip install -q hermes-pmxt
       - name: Trade
         env:
           POLYMARKET_PRIVATE_KEY: ${{ secrets.POLY_PRIVATE_KEY }}
-        run: python trade.py
+        run: |
+          pip install -q hermes-pmxt 2>&1 || pip install hermes-pmxt --retries 3 2>&1
+          python trade.py

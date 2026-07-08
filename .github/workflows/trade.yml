@@ -11,9 +11,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Install
-        run: |
-          npm install -g pmxt
-          pip install -q hermes-pmxt
+        run: pip install -q hermes-pmxt
       - name: Trade
         env:
           POLYMARKET_PRIVATE_KEY: ${{ secrets.POLY_PRIVATE_KEY }}

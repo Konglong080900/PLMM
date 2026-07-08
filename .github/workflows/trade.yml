@@ -4,7 +4,6 @@ jobs:
   trade:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
       - run: pip install -q hermes-pmxt
       - run: python trade.py
         env:
